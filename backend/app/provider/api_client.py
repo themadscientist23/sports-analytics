@@ -10,6 +10,7 @@ def list_games(sport, per_page, season=None, cursor=None, dates=None):
         f"{BASE_URL}/{sport}/v1/games",
         headers={"Authorization": BALLDONTLIE_API_KEY},
         params={"seasons[]": season, "per_page": per_page, "cursor": cursor, "dates[]": dates},
+        timeout=30,
     )
     response.raise_for_status()
     return response.json()
