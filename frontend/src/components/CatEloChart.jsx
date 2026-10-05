@@ -8,13 +8,13 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { formatShortDate } from '../lib/format.js';
+import { CHART_COLORS } from '../lib/chartColors.js';
 import './CatEloChart.css';
 
 function CatEloChart({ history }) {
   const chartData = history.map((game) => ({
     date: formatShortDate(game.date),
     catelo: Math.round(game.catelo),
-    fullDate: game.date,
   }));
 
   return (
@@ -22,34 +22,34 @@ function CatEloChart({ history }) {
       <h2>CatElo Rating Over Time</h2>
       <ResponsiveContainer width="100%" height={400}>
         <LineChart data={chartData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+          <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
           <XAxis
             dataKey="date"
-            stroke="#fff"
-            tick={{ fill: '#fff' }}
+            stroke={CHART_COLORS.text}
+            tick={{ fill: CHART_COLORS.text }}
             angle={-45}
             textAnchor="end"
             height={80}
           />
           <YAxis
-            stroke="#fff"
-            tick={{ fill: '#fff' }}
+            stroke={CHART_COLORS.text}
+            tick={{ fill: CHART_COLORS.text }}
             domain={['dataMin - 50', 'dataMax + 50']}
           />
           <Tooltip
             contentStyle={{
-              backgroundColor: '#1a1a1a',
-              border: '1px solid #fff',
-              color: '#fff',
+              backgroundColor: CHART_COLORS.tooltipBackground,
+              border: `1px solid ${CHART_COLORS.text}`,
+              color: CHART_COLORS.text,
             }}
-            labelStyle={{ color: '#FFA600' }}
+            labelStyle={{ color: CHART_COLORS.accent }}
           />
           <Line
             type="monotone"
             dataKey="catelo"
-            stroke="#FFA600"
+            stroke={CHART_COLORS.accent}
             strokeWidth={2}
-            dot={{ fill: '#FFA600', r: 3 }}
+            dot={{ fill: CHART_COLORS.accent, r: 3 }}
             activeDot={{ r: 5 }}
           />
         </LineChart>

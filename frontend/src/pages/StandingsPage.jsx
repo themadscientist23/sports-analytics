@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { API_URL } from '../lib/api.js';
+import { Link } from 'react-router-dom';
+import { API_URL, fetchJson } from '../lib/api.js';
 import { LEAGUES, logoUrl } from '../lib/leagues.js';
 import { formatCatelo } from '../lib/format.js';
 import './StandingsPage.css';
@@ -19,24 +19,27 @@ const withStats = (team, hasTies) => {
 
 function StandingsPage({ league }) {
   const { title, hasTies } = LEAGUES[league];
-  const navigate = useNavigate();
   const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: 'catelo',
     direction: 'descending',
   });
 
   useEffect(() => {
-    fetch(`${API_URL}/${league}/seasons`)
-      .then((response) => response.json())
+    fetchJson(`${API_URL}/${league}/seasons`)
       .then((seasons) =>
-        fetch(
+        fetchJson(
           `${API_URL}/${league}/seasons/${seasons[seasons.length - 1]}/teams`,
         ),
       )
-      .then((response) => response.json())
       .then((data) => setTeams(data.map((team) => withStats(team, hasTies))))
-      .catch((error) => console.error('Error fetching standings:', error));
+      .catch((error) => {
+        console.error('Error fetching standings:', error);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, [league, hasTies]);
 
   const sortBy = (key) => {
@@ -58,11 +61,19 @@ function StandingsPage({ league }) {
 
   const sortableHeader = (key, label) => (
     <th
-      onClick={() => sortBy(key)}
+      aria-sort={sortConfig.key === key ? sortConfig.direction : undefined}
       className={`sortable ${sortConfig.key === key ? (sortConfig.direction === 'ascending' ? 'sort-asc' : 'sort-desc') : ''}`}>
-      {label}
+      <button onClick={() => sortBy(key)}>{label}</button>
     </th>
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Could not load standings</div>;
+  }
 
   return (
     <>
@@ -89,16 +100,14 @@ function StandingsPage({ league }) {
             <tbody>
               {sortedTeams.map((team) => (
                 <tr key={team.id}>
-                  <td
-                    className="team-name clickable"
-                    onClick={() =>
-                      navigate(`/${league}/team/${team.abbreviation}`)
-                    }>
-                    <img
-                      src={logoUrl(league, team.abbreviation)}
-                      alt={`${team.name} logo`}
-                    />
-                    {team.name}
+                  <td className="team-name">
+                    <Link to={`/${league}/team/${team.abbreviation}`}>
+                      <img
+                        src={logoUrl(league, team.abbreviation)}
+                        alt={`${team.name} logo`}
+                      />
+                      {team.name}
+                    </Link>
                   </td>
                   <td className="catelo">{formatCatelo(team.catelo)}</td>
                   <td>{team.wins}</td>
