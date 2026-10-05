@@ -2,8 +2,8 @@
 
 echo "Script started"
 
-source /Users/ciaranturner/code/sportsAnalytics/backend/venv/bin/activate
-cd /Users/ciaranturner/code/sportsAnalytics/backend
+cd ${0:A:h}/..
+source venv/bin/activate
 
 LOG=scripts/daily_updater.log
 
