@@ -57,6 +57,7 @@ function StandingsPage({ league }) {
 
   const sortableHeader = (key, label) => (
     <th
+      aria-sort={sortConfig.key === key ? sortConfig.direction : undefined}
       className={`sortable ${sortConfig.key === key ? (sortConfig.direction === 'ascending' ? 'sort-asc' : 'sort-desc') : ''}`}>
       <button onClick={() => sortBy(key)}>{label}</button>
     </th>
