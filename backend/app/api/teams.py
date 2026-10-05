@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_db
@@ -24,6 +24,8 @@ def get_teams(sport: Sport, season: int, db: Session = Depends(get_db)):
 def get_team(sport: Sport, season: int, abbreviation: str, db: Session = Depends(get_db)):
     config = SPORTS[sport]
     team = team_by_abbreviation(db, config, abbreviation)
+    if team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
     history = catelo_history(db, config, team.id, season)
     return {
         "team": {
