@@ -1,15 +1,28 @@
-import os
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from dotenv import load_dotenv
 
-load_dotenv()
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(env_file=".env")
 
-DB_USER = os.getenv("DB_USER", "root")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "3306")
-DB_NAME = os.getenv("DB_NAME", "sportsdb")
+    db_user: str = "root"
+    db_password: str = ""
+    db_host: str = "localhost"
+    db_port: str = "3306"
+    db_name: str = "sportsdb"
 
-BALLDONTLIE_API_KEY = os.getenv("BALLDONTLIE_API_KEY")
+    balldontlie_api_key: str | None = None
 
-CORS_ORIGINS = os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(",")
+    cors_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
+
+
+settings = Settings()
+
+DB_USER = settings.db_user
+DB_PASSWORD = settings.db_password
+DB_HOST = settings.db_host
+DB_PORT = settings.db_port
+DB_NAME = settings.db_name
+
+BALLDONTLIE_API_KEY = settings.balldontlie_api_key
+
+CORS_ORIGINS = settings.cors_origins.split(",")
