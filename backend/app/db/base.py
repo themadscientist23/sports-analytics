@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Index, Integer, String
 from sqlalchemy.orm import backref, declarative_base, declared_attr, relationship
@@ -12,8 +12,8 @@ class TeamBase:
     abbreviation = Column(String(10), nullable=False, index=True)
     updated_at = Column(
         DateTime,
-        default=lambda: datetime.now(timezone.utc),
-        onupdate=lambda: datetime.now(timezone.utc),
+        default=lambda: datetime.now(UTC),
+        onupdate=lambda: datetime.now(UTC),
     )
 
 
