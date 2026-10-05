@@ -1,6 +1,6 @@
 .main-nav {
   display: flex;
-  justify-content: space-between; /* space between logo and nav links */
+  justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
   background: linear-gradient(
@@ -20,7 +20,7 @@
 
 .main-nav .nav-links {
   display: flex;
-  gap: 4rem; /* space between links */
+  gap: 4rem;
 }
 
 .main-nav .nav-links a {
