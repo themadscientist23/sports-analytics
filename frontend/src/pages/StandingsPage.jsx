@@ -52,11 +52,8 @@ function StandingsPage({ league }) {
 
   const sortedTeams = [...teams].sort((a, b) => {
     const { key, direction } = sortConfig;
-    if (direction === 'ascending') {
-      return a[key] > b[key] ? 1 : -1;
-    } else {
-      return a[key] < b[key] ? 1 : -1;
-    }
+    const difference = (a[key] ?? 0) - (b[key] ?? 0);
+    return direction === 'ascending' ? difference : -difference;
   });
 
   const sortableHeader = (key, label) => (
