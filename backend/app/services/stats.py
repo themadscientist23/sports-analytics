@@ -89,3 +89,8 @@ def catelo_history(session, config, team_id, season):
             }
         )
     return history
+
+
+def team_by_abbreviation(session, config, abbreviation):
+    team_model = config["team_model"]
+    return session.query(team_model).filter(team_model.abbreviation == abbreviation).one()
