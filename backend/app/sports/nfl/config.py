@@ -1,5 +1,5 @@
 from app.sports.nfl.models import NFLGame, NFLGameRating, NFLTeam
-from app.sports.nfl.process_games import process_game
+from app.sports.nfl.rating import process_game
 
 
 def _extract(game):

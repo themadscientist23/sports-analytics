@@ -1,5 +1,5 @@
 from app.sports.mlb.models import MLBGame, MLBGameRating, MLBTeam
-from app.sports.mlb.process_games import process_game
+from app.sports.mlb.rating import process_game
 
 
 def _extract(game):
