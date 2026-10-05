@@ -5,6 +5,7 @@ from datetime import date
 
 from app.db.session import SessionLocal
 from app.provider.api_client import list_games
+from app.provider.games import API_GAMES
 from app.sports.config import SPORTS
 
 logger = logging.getLogger(__name__)
@@ -19,24 +20,18 @@ def _create_or_update_team(session, team_model, team_data):
     team.abbreviation = team_data["abbreviation"]
 
 
-def _is_excluded(game_data, fields):
-    return (
-        game_data.get("season_type") == "spring_training"
-        or game_data.get("ist_stage") == "Championship"
-        or fields["home_team"]["id"] < 0
-        or fields["away_team"]["id"] < 0
-    )
+def _is_excluded(game, fields):
+    return game.is_excluded() or fields["home_team"]["id"] < 0 or fields["away_team"]["id"] < 0
 
 
-def _mark_games_past_regular_season(session, config, season):
-    game_model = config["game_model"]
+def _mark_games_past_regular_season(session, game_model, regular_season_games, season):
     games = session.query(game_model).filter(game_model.season == season).order_by(game_model.date, game_model.id).all()
 
     played = {}
     for game in games:
         played[game.away_team_id] = played.get(game.away_team_id, 0) + 1
         played[game.home_team_id] = played.get(game.home_team_id, 0) + 1
-        if played[game.home_team_id] > config["regular_season_games"]:
+        if played[game.home_team_id] > regular_season_games:
             game.postseason = True
 
 
@@ -44,6 +39,7 @@ def ingest_games(sport, season=None, dates=None, request_delay=60):
     config = SPORTS[sport]
     team_model = config["team_model"]
     game_model = config["game_model"]
+    api_game_model = API_GAMES[sport]
 
     added_count = 0
     skipped_count = 0
@@ -60,16 +56,16 @@ def ingest_games(sport, season=None, dates=None, request_delay=60):
                 break
 
             for game_data in page_games:
-                if not config["is_final"](game_data):
+                game = api_game_model.model_validate(game_data)
+                if not game.is_final():
                     skipped_count += 1
                     continue
 
-                game_id = game_data["id"]
-                if session.get(game_model, game_id):
+                if session.get(game_model, game.id):
                     continue
 
-                fields = config["extract"](game_data)
-                if _is_excluded(game_data, fields):
+                fields = game.extract()
+                if _is_excluded(game, fields):
                     excluded_count += 1
                     continue
 
@@ -78,15 +74,15 @@ def ingest_games(sport, season=None, dates=None, request_delay=60):
 
                 session.add(
                     game_model(
-                        id=game_id,
-                        season=game_data["season"],
-                        date=date.fromisoformat(game_data["date"][:10]),
-                        postseason=bool(game_data.get("postseason")),
+                        id=game.id,
+                        season=game.season,
+                        date=date.fromisoformat(game.date[:10]),
+                        postseason=game.postseason,
                         **fields["game"],
                     )
                 )
                 added_count += 1
-                added_season = game_data["season"]
+                added_season = game.season
 
             session.commit()
             cursor = games_page["meta"].get("next_cursor")
@@ -95,7 +91,7 @@ def ingest_games(sport, season=None, dates=None, request_delay=60):
             time.sleep(request_delay)
 
         if added_season:
-            _mark_games_past_regular_season(session, config, added_season)
+            _mark_games_past_regular_season(session, game_model, api_game_model.regular_season_games, added_season)
         session.commit()
 
         logger.info(
