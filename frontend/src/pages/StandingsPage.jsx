@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { API_URL } from '../lib/api.js';
 import { LEAGUES, logoUrl } from '../lib/leagues.js';
 import { formatCatelo } from '../lib/format.js';
@@ -19,7 +19,6 @@ const withStats = (team, hasTies) => {
 
 function StandingsPage({ league }) {
   const { title, hasTies } = LEAGUES[league];
-  const navigate = useNavigate();
   const [teams, setTeams] = useState([]);
   const [sortConfig, setSortConfig] = useState({
     key: 'catelo',
@@ -58,9 +57,8 @@ function StandingsPage({ league }) {
 
   const sortableHeader = (key, label) => (
     <th
-      onClick={() => sortBy(key)}
       className={`sortable ${sortConfig.key === key ? (sortConfig.direction === 'ascending' ? 'sort-asc' : 'sort-desc') : ''}`}>
-      {label}
+      <button onClick={() => sortBy(key)}>{label}</button>
     </th>
   );
 
@@ -89,16 +87,14 @@ function StandingsPage({ league }) {
             <tbody>
               {sortedTeams.map((team) => (
                 <tr key={team.id}>
-                  <td
-                    className="team-name clickable"
-                    onClick={() =>
-                      navigate(`/${league}/team/${team.abbreviation}`)
-                    }>
-                    <img
-                      src={logoUrl(league, team.abbreviation)}
-                      alt={`${team.name} logo`}
-                    />
-                    {team.name}
+                  <td className="team-name">
+                    <Link to={`/${league}/team/${team.abbreviation}`}>
+                      <img
+                        src={logoUrl(league, team.abbreviation)}
+                        alt={`${team.name} logo`}
+                      />
+                      {team.name}
+                    </Link>
                   </td>
                   <td className="catelo">{formatCatelo(team.catelo)}</td>
                   <td>{team.wins}</td>

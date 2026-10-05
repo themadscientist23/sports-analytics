@@ -30,12 +30,21 @@
   border-bottom: 1px solid var(--text-color);
   font-weight: 700;
   position: relative;
-  cursor: pointer;
   white-space: nowrap;
 }
 
 .standings th.sortable {
-  position: relative;
+  padding: 0;
+}
+
+.standings th.sortable button {
+  width: 100%;
+  padding: 1em 1.5em 1em 0.75em;
+  background: none;
+  border: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
 }
 
 .standings th.sortable::after {
@@ -81,10 +90,13 @@
 
 .standings td.team-name {
   background-color: var(--bg-color);
+  text-align: left;
+  transition: all 0.2s;
+}
+
+.standings td.team-name a {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  text-align: left;
 }
 
 .standings td.team-name img {
@@ -97,12 +109,7 @@
   box-sizing: content-box;
 }
 
-.standings td.team-name.clickable {
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.standings td.team-name.clickable:hover {
+.standings td.team-name:hover {
   background-color: var(--hover-color);
   transform: scale(1.02);
 }

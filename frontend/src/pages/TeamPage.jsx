@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { API_URL } from '../lib/api.js';
 import { LEAGUES } from '../lib/leagues.js';
 import TeamHeader from '../components/TeamHeader.jsx';
@@ -9,7 +9,6 @@ import './TeamPage.css';
 
 function TeamPage({ league }) {
   const { abbreviation } = useParams();
-  const navigate = useNavigate();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -44,9 +43,9 @@ function TeamPage({ league }) {
 
   return (
     <div className="team-page">
-      <button onClick={() => navigate(`/${league}`)} className="back-button">
+      <Link to={`/${league}`} className="back-button">
         ← Back to {LEAGUES[league].title}
-      </button>
+      </Link>
       <TeamHeader league={league} team={team} />
       {history.length > 0 ? (
         <>
