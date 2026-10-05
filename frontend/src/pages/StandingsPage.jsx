@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { API_URL } from '../lib/api.js';
+import { API_URL, fetchJson } from '../lib/api.js';
 import { LEAGUES, logoUrl } from '../lib/leagues.js';
 import { formatCatelo } from '../lib/format.js';
 import './StandingsPage.css';
@@ -20,22 +20,26 @@ const withStats = (team, hasTies) => {
 function StandingsPage({ league }) {
   const { title, hasTies } = LEAGUES[league];
   const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [sortConfig, setSortConfig] = useState({
     key: 'catelo',
     direction: 'descending',
   });
 
   useEffect(() => {
-    fetch(`${API_URL}/${league}/seasons`)
-      .then((response) => response.json())
+    fetchJson(`${API_URL}/${league}/seasons`)
       .then((seasons) =>
-        fetch(
+        fetchJson(
           `${API_URL}/${league}/seasons/${seasons[seasons.length - 1]}/teams`,
         ),
       )
-      .then((response) => response.json())
       .then((data) => setTeams(data.map((team) => withStats(team, hasTies))))
-      .catch((error) => console.error('Error fetching standings:', error));
+      .catch((error) => {
+        console.error('Error fetching standings:', error);
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, [league, hasTies]);
 
   const sortBy = (key) => {
@@ -62,6 +66,14 @@ function StandingsPage({ league }) {
       <button onClick={() => sortBy(key)}>{label}</button>
     </th>
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Could not load standings</div>;
+  }
 
   return (
     <>

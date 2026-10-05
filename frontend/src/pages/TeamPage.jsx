@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { API_URL } from '../lib/api.js';
+import { API_URL, fetchJson } from '../lib/api.js';
 import { LEAGUES } from '../lib/leagues.js';
 import TeamHeader from '../components/TeamHeader.jsx';
 import CatEloChart from '../components/CatEloChart.jsx';
@@ -11,32 +11,29 @@ function TeamPage({ league }) {
   const { abbreviation } = useParams();
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/${league}/seasons`)
-      .then((response) => response.json())
+    fetchJson(`${API_URL}/${league}/seasons`)
       .then((seasons) =>
-        fetch(
+        fetchJson(
           `${API_URL}/${league}/seasons/${seasons[seasons.length - 1]}/teams/${abbreviation}`,
         ),
       )
-      .then((response) => response.json())
-      .then((data) => {
-        setTeamData(data);
-        setLoading(false);
-      })
+      .then((data) => setTeamData(data))
       .catch((error) => {
         console.error('Error fetching team data:', error);
-        setLoading(false);
-      });
+        setError(true);
+      })
+      .finally(() => setLoading(false));
   }, [abbreviation, league]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!teamData || !teamData.team) {
-    return <div>Team not found</div>;
+  if (error) {
+    return <div>Could not load team</div>;
   }
 
   const { team, history } = teamData;
