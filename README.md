@@ -12,13 +12,14 @@ Custom Elo ("CatElo") ratings for NBA, NFL, and MLB. FastAPI + MySQL backend, Re
 - backend organized as an `app` package, with env settings in `core/` and dependency-injected DB sessions
 - alembic migrations for the schema
 - ruff linting and a pytest setup
+- seasons tagged on every game
+- `pydantic-settings` for config and logging instead of prints
+- daily cron script that runs from any path
+- frontend cleanup: one API base URL, loading and error states, accessible links and sort buttons
 
 ## ToDo
 
-- tag seasons to each game
-- `pydantic-settings` for config?
 - backfill and rate every sport
-- frontend cleanup: one API base URL, a season picker, remove unused imports
-- fix the daily cron path
+- season picker
 - tune CatElo per sport (placeholder right now)
 - more tests
