@@ -1,3 +1,5 @@
+from enum import StrEnum
+
 from app.sports.mlb.config import MLB_CONFIG
 from app.sports.nba.config import NBA_CONFIG
 from app.sports.nfl.config import NFL_CONFIG
@@ -7,3 +9,9 @@ SPORTS = {
     "nfl": NFL_CONFIG,
     "mlb": MLB_CONFIG,
 }
+
+
+class Sport(StrEnum):
+    NBA = "nba"
+    NFL = "nfl"
+    MLB = "mlb"
