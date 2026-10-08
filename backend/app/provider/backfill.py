@@ -1,7 +1,6 @@
 import argparse
 import logging
 import time
-from datetime import date
 
 from app.db.session import SessionLocal
 from app.provider.api_client import list_games
@@ -76,7 +75,7 @@ def ingest_games(sport, season=None, dates=None, request_delay=60):
                     game_model(
                         id=game.id,
                         season=game.season,
-                        date=date.fromisoformat(game.date[:10]),
+                        date=game.game_date(),
                         postseason=game.postseason,
                         **fields["game"],
                     )

@@ -1,6 +1,10 @@
+from datetime import date, datetime
 from typing import Any, ClassVar
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
+
+PACIFIC = ZoneInfo("America/Los_Angeles")
 
 
 class NBAApiTeam(BaseModel):
@@ -28,6 +32,9 @@ class NBAApiGame(BaseModel):
 
     def is_excluded(self) -> bool:
         return self.ist_stage == "Championship"
+
+    def game_date(self) -> date:
+        return date.fromisoformat(self.date)
 
     def extract(self) -> dict[str, Any]:
         home, away = self.home_team, self.visitor_team
@@ -67,6 +74,9 @@ class NFLApiGame(BaseModel):
 
     def is_excluded(self) -> bool:
         return False
+
+    def game_date(self) -> date:
+        return datetime.fromisoformat(self.date).astimezone(PACIFIC).date()
 
     def extract(self) -> dict[str, Any]:
         home, away = self.home_team, self.visitor_team
@@ -111,6 +121,9 @@ class MLBApiGame(BaseModel):
 
     def is_excluded(self) -> bool:
         return self.season_type == "spring_training"
+
+    def game_date(self) -> date:
+        return datetime.fromisoformat(self.date).astimezone(PACIFIC).date()
 
     def extract(self) -> dict[str, Any]:
         home, away = self.home_team, self.away_team
