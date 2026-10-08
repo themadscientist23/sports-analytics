@@ -113,3 +113,17 @@
   background-color: var(--hover-color);
   transform: scale(1.02);
 }
+
+.season-picker {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.season-picker select {
+  background: var(--hover-color);
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+  border-radius: 6px;
+  padding: 0.3em 0.5em;
+  font: inherit;
+}
