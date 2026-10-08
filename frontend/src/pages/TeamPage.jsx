@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link } from 'react-router-dom';
 import { getSeasons, getTeam } from '../lib/api.js';
 import { LEAGUES } from '../lib/leagues.js';
 import TeamHeader from '../components/TeamHeader.jsx';
@@ -9,6 +9,8 @@ import './TeamPage.css';
 
 function TeamPage({ league }) {
   const { abbreviation } = useParams();
+  const [searchParams] = useSearchParams();
+  const season = searchParams.get('season');
   const [teamData, setTeamData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -16,7 +18,7 @@ function TeamPage({ league }) {
   useEffect(() => {
     getSeasons(league)
       .then((seasons) =>
-        getTeam(league, seasons[seasons.length - 1], abbreviation),
+        getTeam(league, season ?? seasons[seasons.length - 1], abbreviation),
       )
       .then((data) => setTeamData(data))
       .catch((error) => {
@@ -24,7 +26,7 @@ function TeamPage({ league }) {
         setError(true);
       })
       .finally(() => setLoading(false));
-  }, [abbreviation, league]);
+  }, [abbreviation, league, season]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -38,7 +40,9 @@ function TeamPage({ league }) {
 
   return (
     <div className="team-page">
-      <Link to={`/${league}`} className="back-button">
+      <Link
+        to={{ pathname: `/${league}`, search: searchParams.toString() }}
+        className="back-button">
         ← Back to {LEAGUES[league].title}
       </Link>
       <TeamHeader league={league} team={team} />

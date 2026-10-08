@@ -126,7 +126,8 @@ function StandingsPage({ league }) {
               {sortedTeams.map((team) => (
                 <tr key={team.id}>
                   <td className="team-name">
-                    <Link to={`/${league}/team/${team.abbreviation}`}>
+                    <Link
+                      to={`/${league}/team/${team.abbreviation}?season=${season}`}>
                       <img
                         src={logoUrl(league, team.abbreviation)}
                         alt={`${team.name} logo`}
