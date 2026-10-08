@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { API_URL, fetchJson } from '../lib/api.js';
+import { getSeasons, getStandings } from '../lib/api.js';
 import { LEAGUES, logoUrl } from '../lib/leagues.js';
 import { formatCatelo } from '../lib/format.js';
 import './StandingsPage.css';
@@ -28,12 +28,8 @@ function StandingsPage({ league }) {
   });
 
   useEffect(() => {
-    fetchJson(`${API_URL}/${league}/seasons`)
-      .then((seasons) =>
-        fetchJson(
-          `${API_URL}/${league}/seasons/${seasons[seasons.length - 1]}/teams`,
-        ),
-      )
+    getSeasons(league)
+      .then((seasons) => getStandings(league, seasons[seasons.length - 1]))
       .then((data) => setTeams(data.map((team) => withStats(team, hasTies))))
       .catch((error) => {
         console.error('Error fetching standings:', error);

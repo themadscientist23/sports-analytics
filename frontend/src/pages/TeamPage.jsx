@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { API_URL, fetchJson } from '../lib/api.js';
+import { getSeasons, getTeam } from '../lib/api.js';
 import { LEAGUES } from '../lib/leagues.js';
 import TeamHeader from '../components/TeamHeader.jsx';
 import CatEloChart from '../components/CatEloChart.jsx';
@@ -14,11 +14,9 @@ function TeamPage({ league }) {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetchJson(`${API_URL}/${league}/seasons`)
+    getSeasons(league)
       .then((seasons) =>
-        fetchJson(
-          `${API_URL}/${league}/seasons/${seasons[seasons.length - 1]}/teams/${abbreviation}`,
-        ),
+        getTeam(league, seasons[seasons.length - 1], abbreviation),
       )
       .then((data) => setTeamData(data))
       .catch((error) => {
