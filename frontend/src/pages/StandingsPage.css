@@ -9,7 +9,7 @@
   width: 80%;
   min-width: 960px;
   table-layout: fixed;
-  border: 3px solid var(--text-color);
+  border: 1px solid var(--border-subtle-color);
   border-radius: 12px;
   font-size: 15px;
   color: var(--text-color);
@@ -27,7 +27,6 @@
   color: var(--text-color);
   padding: 1em 1.5em 1em 0.75em;
   text-align: center;
-  border-bottom: 1px solid var(--text-color);
   font-weight: 700;
   position: relative;
   white-space: nowrap;
@@ -72,11 +71,15 @@
 
 .standings td {
   background-color: var(--bg-color);
-  border: 1px solid var(--text-color);
+  border-bottom: 1px solid var(--border-subtle-color);
   padding: 0.5em 1em;
   text-align: center;
   transition: background-color 0.2s;
   white-space: nowrap;
+}
+
+.standings tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .standings td:hover {
