@@ -23,7 +23,9 @@
 
 .standings th {
   box-sizing: border-box;
-  background: var(--title-gradient);
+  background:
+    linear-gradient(var(--header-shade-color), var(--header-shade-color)),
+    var(--title-gradient);
   color: var(--text-color);
   padding: 1em 1.5em 1em 0.75em;
   text-align: center;

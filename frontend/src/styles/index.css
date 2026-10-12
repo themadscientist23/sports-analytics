@@ -11,6 +11,7 @@
   --surface-color: rgba(255, 255, 255, 0.05);
   --surface-subtle-color: rgba(255, 255, 255, 0.03);
   --border-subtle-color: rgba(255, 255, 255, 0.25);
+  --header-shade-color: rgba(0, 0, 0, 0.2);
   --hover-color: #1a1a1a;
   --logo-bg-color: #f0f0f0;
   --brand-start-color: hsla(4, 93%, 67%, 1);
